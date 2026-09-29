@@ -1,14 +1,30 @@
 # Imports
+import os
+from google.cloud import storage
 from flask import Flask, request, jsonify
 import tensorflow as tf
 import numpy as np
 from PIL import Image
 
+MODEL_PATH = "model_t2.keras"
+BUCKET_NAME = os.environ.get("model-weights676")
+
+def get_model():
+    if not os.path.exists(MODEL_PATH):
+        print(f"Downloading model from GCS bucket: {BUCKET_NAME}...")
+        client = storage.Client()
+        bucket = client.bucket(BUCKET_NAME)
+        blob = bucket.blob("model.keras")
+        blob.download_to_filename(MODEL_PATH)
+        print("Model downloaded successfully.")
+    
+    return tf.keras.models.load_model(MODEL_PATH)
+
+# Load the model into memory
+model = get_model()
+
 # Creates Flask application object
 app = Flask(__name__)
-
-# Load the saved CNN model
-model = tf.keras.models.load_model('model_t2.keras')
 
 # Define class names
 class_names = ['Acne', 'Bullous', 'Candidiasis', 'Eczema', 'Psoriasis', 'Rosacea', 'Seborrh_Keratosis', 'Warts']
