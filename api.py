@@ -7,14 +7,14 @@ import numpy as np
 from PIL import Image
 
 MODEL_PATH = "model_t2.keras"
-BUCKET_NAME = os.environ.get("model-weights676")
+BUCKET_NAME = os.environ.get("MODEL_BUCKET_NAME", "model-weights676")
 
 def get_model():
     if not os.path.exists(MODEL_PATH):
         print(f"Downloading model from GCS bucket: {BUCKET_NAME}...")
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
-        blob = bucket.blob("model.keras")
+        blob = bucket.blob(MODEL_PATH)
         blob.download_to_filename(MODEL_PATH)
         print("Model downloaded successfully.")
     
