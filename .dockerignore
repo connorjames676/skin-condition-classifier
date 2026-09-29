@@ -1,0 +1,6 @@
+.git
+.gitignore
+Web Application/
+venv/
+__pycache__/
+*.ipynb
